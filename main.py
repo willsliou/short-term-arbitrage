@@ -50,6 +50,25 @@ model = Sequential()
 
 
 model.add(LSTM(units = 50, return_sequences = True, input_shape=(x_train.shape[1], 1) ) )
+model.add(Dropout(0.2))
+
+model.add(LSTM(units = 50, return_sequences = True) )
+model.add(Dropout(0.2))
+
+model.add(LSTM(units = 50))
+model.add(Dropout(0.2))
+
+# Predict next closing
+model.add(Dense(units=1)) 
+
+model.compile(optimizer = 'adam', loss = 'mean_squared_error')
+# Fit the data, see same data 24 times, model sees 32 units at once
+model.fit(x_train, y_train, epochs = 25, batch_size = 32)
+
+
+
+
+
 
 
 
