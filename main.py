@@ -11,7 +11,7 @@ import pandas_datareader as web
 
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers Dense, Dropout, LSTM
+from tensorflow.keras.layers import Dense, Dropout, LSTM
 
 
 # Load Data
@@ -20,7 +20,6 @@ company = 'AAPL'
 
 start = dt.datetime(2012,1,1)
 end = dt.datetime(2020,1,1)
-
 
 data = web.DataReader(company, 'yahoo', start, end)
 
@@ -47,7 +46,6 @@ x_train = np.reshape(x_train, x_train.shape[0], x_train.shape[1])
 
 #Building model
 model = Sequential()
-
 
 model.add(LSTM(units = 50, return_sequences = True, input_shape=(x_train.shape[1], 1) ) )
 model.add(Dropout(0.2))
@@ -79,7 +77,25 @@ model_inputs = total_dataset[len(total_dataset) - len(test_data) - prediction_da
 model_inputs = model_inputs.reshape(-1, 1)
 model_inputs = scaler.transform(model_inputs)
 
+for x in range(prediction_days, len(model_inputs)):
+    x_test.append(model_inputs[x-prediction_days:x, 0])
+
+x_test = np.array(x_test)
+x_test = np.reshape(x_test.shape[0], x_test.shape[1], 1 )
 
 
+predicted_prices = model.predict(x_test)
+# Inverse transform data
+predicted_prices = scaler.inverse_transform(predicted_prices)
+
+
+# Plot
+plt.plot(actual_prices, color = "blue", label = "Actual")
+plt.plot(predicted_prices, color = "red", label = "Predicted")
+plt.title("{company} Share Price" )
+plt.xlabel("Time")
+plt.ylabel("{company} Share Price" )
+plt.legend()
+plt.show()
 
 
