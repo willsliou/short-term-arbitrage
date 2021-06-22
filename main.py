@@ -78,11 +78,14 @@ model_inputs = total_dataset[len(total_dataset) - len(test_data) - prediction_da
 model_inputs = model_inputs.reshape(-1, 1)
 model_inputs = scaler.transform(model_inputs)
 
+
+# Predict on Test Data
+x_test = []
 for x in range(prediction_days, len(model_inputs)):
     x_test.append(model_inputs[x-prediction_days:x, 0])
 
 x_test = np.array(x_test)
-x_test = np.reshape(x_test.shape[0], x_test.shape[1], 1 )
+x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1], 1) )
 
 
 predicted_prices = model.predict(x_test)
@@ -91,11 +94,11 @@ predicted_prices = scaler.inverse_transform(predicted_prices)
 
 
 # Plot
-plt.plot(actual_prices, color = "blue", label = "Actual")
-plt.plot(predicted_prices, color = "red", label = "Predicted")
-plt.title("{company} Share Price" )
+plt.plot(actual_prices, color = "blue", label = f"{company} Actual Price")
+plt.plot(predicted_prices, color = "red", label = f"{company} Predicted Price")
+plt.title(f"{company} Share Price" )
 plt.xlabel("Time")
-plt.ylabel("{company} Share Price" )
+plt.ylabel(f"{company} Share Price" )
 plt.legend()
 plt.show()
 
